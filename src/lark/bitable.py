@@ -2,7 +2,7 @@
 飞书多维表格API模块
 """
 from lark_oapi.api.bitable.v1 import *
-from lark.base import LarkBase
+from src.lark.base import LarkBase
 import configparser
 import json
 
@@ -135,7 +135,7 @@ class LarkBitable(LarkBase):
         获取验证集样本数据
         """
         records = self.get_all_records_json(self.app_token, self.table_id)
-        records = [record for record in records if record['fields']['origin_content'] is not None]
+        records = [record for record in records if record['fields']['message_detail'] is not None]
         # 当sample_size小于等于0时，返回所有记录
         if self.sample_size > 0:
             records = records[:self.sample_size]

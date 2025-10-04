@@ -1,5 +1,5 @@
 from ast import Pass
-from lark.base import LarkBase
+from src.lark.base import LarkBase
 import configparser
 import requests
 import json
@@ -42,4 +42,23 @@ class Aliy(LarkBase):
         
         response_data = response.json()
         self.logger.debug(f"触发自定义任务返回内容: {response_data}")
-        return response_data
+
+        result = self._extract_trigger_result(response_data)
+
+        return result
+
+    def _extract_trigger_result(self, response_data):
+        """
+        提取触发任务返回结果
+        """
+        response_extracted = response_data.get('data').get('data').get('response')
+
+        if isinstance(response_extracted, str):
+            response_extracted = json.loads(response_extracted)
+
+        result = {
+                "object": response_extracted.get('object'),
+                "content": response_extracted.get('content')
+            }
+       
+        return result

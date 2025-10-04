@@ -2,7 +2,7 @@
 飞书API基类模块
 """
 import lark_oapi as lark
-from src.logger import get_logger
+from src.utils.logger import get_logger
 import configparser
 import requests
 import json
