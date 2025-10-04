@@ -4,6 +4,8 @@
 import lark_oapi as lark
 from src.logger import get_logger
 import configparser
+import requests
+import json
 
 class LarkBase:
     """飞书API基类，提供通用的客户端初始化和错误处理功能"""
@@ -92,3 +94,36 @@ class LarkBase:
         
         # 处理响应
         return self.handle_response(response, "获取Wiki节点空间信息")
+
+    def get_tenant_access_token(self):
+        """
+        必要时手动生成请求凭证，例如Aliy的请求凭证
+        """
+        url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
+
+        headers = {
+            "Content-Type": "application/json; charset=utf-8"
+        }
+        
+        data = {
+            "app_id": self.app_id,
+            "app_secret": self.app_secret
+        }
+        
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response = response.json()
+        if response.get('code') == 0:
+            self.logger.debug(f"获取租户凭证成功, token: {response.get('tenant_access_token')}")
+            return response.get('tenant_access_token')
+        else:
+            raise Exception(f"获取租户凭证失败, code: {response.get('code')}, msg: {response.get('msg')}")
+
+    def generate_header(self):
+        """
+        生成请求头
+        """
+        tenant_access_token = self.get_tenant_access_token()
+        return {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": f"Bearer {tenant_access_token}"
+        }

@@ -89,3 +89,5 @@ secrets.json
 # Temporary files
 *.tmp
 *.temp
+test.py
+test_*.py
