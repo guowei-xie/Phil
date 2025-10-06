@@ -1,5 +1,3 @@
-from unittest import result
-from urllib3 import response
 from src.lark.bitable import LarkBitable
 from src.processor import process_single_case
 from tqdm import tqdm
