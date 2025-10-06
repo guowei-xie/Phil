@@ -81,6 +81,9 @@ Thumbs.db
 logs/
 *.log
 
+# Results
+results/
+
 # Configuration files with sensitive data
 config.ini
 secrets.json
