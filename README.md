@@ -70,7 +70,6 @@ pip3 install -r requirements.txt
 
 `Aliy工作流变量`：在开始节点设置“自定义参数”-`message_detail(String类型)`，结束节点设置“响应参数”-`response(Object类型，{{LLM.response}})`
 ---
-``
 
 
 
@@ -86,3 +85,27 @@ python main.py
 4. 控制台打印概览，并写入 `results/analysis_YYYYMMDD_HHMMSS.xlsx`（含 `sheet1_samples` 与 `sheet2_labels`）。
 
 ---
+
+## 结果说明
+- 样本级（sheet1_samples）：包含 `sample_id`、`message_detail`、`ground_truth`、`object`、`content`、`is_match`（1 完全匹配/0 不匹配）。
+- 标签级（sheet2_labels）：包含 `label`、`support`、`predicted`、`tp`、`recall`、`precision`。默认以真实标签全集为基准（仅统计真实出现过的标签）。
+
+示例输出文件：`results/analysis_YYYYMMDD_HHMMSS.xlsx`
+
+---
+
+## 分析结果解读指南
+- 样本级视角：
+  - `is_match=1` 表示该样本预测标签集合与真实集合完全一致；`0` 表示不一致（包含漏召或错召）。
+  - 建议优先定位 `is_match=0` 的样本，核查具体差异（对比 `ground_truth` 与 `object`）。
+- 标签级视角：
+  - `support`：该标签在真实数据中出现的样本数（越大代表该标签覆盖广）。
+  - `predicted`：被模型预测为正的样本数（过高但 `tp` 偏低，可能提示过召）。
+  - `tp`：真正例数；与 `support/predicted` 对照可快速判断偏差来源。
+  - `recall = tp / support`：召回率衡量“漏召”；低召回通常需要提升模型识别该标签的能力或扩充训练/规则样本。
+  - `precision = tp / predicted`：准确率衡量“错召”；低准确通常需要收紧判定规则或优化提示降低歧义。
+- 综合建议：
+  - 优先处理 `support` 高但 `recall` 低的标签（高影响低覆盖）。
+  - 对 `precision` 低的标签，排查相似或易混淆标签，优化提示上下文与约束。
+  - 对样本进行分桶（按来源、长度、意图类型等）可更快定位系统性问题。
+  - 在重要标签上观察趋势（多次运行的对比），避免单次波动误判。
