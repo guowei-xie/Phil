@@ -1,4 +1,4 @@
-## 项目简介
+## 项目简介(*仅内部使用)
 
 用于“Aliy助手【菲尔】”的Prompt调优工具， 从飞书多维表（Bitable）获取验证集，调用自定义推理任务（Aliy工作流）进行处理，并对结果进行样本级与标签级统计分析。程序运行后将在控制台输出概览，并把分析结果保存到 `results/analysis_YYYYMMDD_HHMMSS.xlsx`。
 
@@ -64,9 +64,15 @@ pip3 install -r requirements.txt
   - `appToken`、`tableId`: 验证集的飞书多维表凭据与表标识。
   - `sampleSize`: 采样数量（0 表示使用全部）。
 - [Aliy]
-  - `webhook`、`apiKey`: 自定义任务触发接口与密钥。
+  - `webhook`、`apiKey`: 自定义任务触发接口与密钥。 
+  
+`验证集`多维表格结构：[示例数据表](https://wrpnn3mat2.feishu.cn/base/J2ZHbzt8FahJDdssT6dcTkKNnTc?table=tblzRcYIPHpa1Kxj&view=vewOz2446j) 
 
+`Aliy工作流变量`：在开始节点设置“自定义参数”-`message_detail(String类型)`，结束节点设置“响应参数”-`response(Object类型，{{LLM.response}})`
 ---
+``
+
+
 
 ## 运行
 ```powershell
@@ -74,8 +80,8 @@ pip3 install -r requirements.txt
 python main.py
 ```
 运行过程：
-1. 通过 `src.lark.bitable.LarkBitable` 拉取样本记录；
-2. 逐条调用 `src.processor.process_single_case` 触发自定义任务；
+1. 通过 `src.lark.bitable.LarkBitable` 拉取样本记录（验证集）；
+2. 逐条调用 `src.processor.process_single_case` 触发自定义任务（入参-message_detail/返回-LLM.response）；
 3. 汇总为样本级与标签级指标（`analyze_results_by_sample`、`analyze_results_by_label`）；
 4. 控制台打印概览，并写入 `results/analysis_YYYYMMDD_HHMMSS.xlsx`（含 `sheet1_samples` 与 `sheet2_labels`）。
 
