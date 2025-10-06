@@ -50,7 +50,7 @@ pip3 install -r requirements.txt
 ---
 
 ## 配置
-请先复制 `config.example.ini` 为 `config.ini`，并按需填写真实配置。切勿把真实密钥提交到版本库。
+1. 请先复制 `config.example.ini` 为 `config.ini`，并按需填写真实配置。切勿把真实密钥提交到版本库。
 
 `config.ini` 关键段落说明：
 - [APP]
@@ -66,9 +66,9 @@ pip3 install -r requirements.txt
 - [Aliy]
   - `webhook`、`apiKey`: 自定义任务触发接口与密钥。 
   
-`验证集`多维表格结构：[示例数据表](https://wrpnn3mat2.feishu.cn/base/J2ZHbzt8FahJDdssT6dcTkKNnTc?table=tblzRcYIPHpa1Kxj&view=vewOz2446j) 
+2. `验证集`多维表格结构：[示例数据表](https://wrpnn3mat2.feishu.cn/base/J2ZHbzt8FahJDdssT6dcTkKNnTc?table=tblzRcYIPHpa1Kxj&view=vewOz2446j) 
 
-`Aliy工作流变量`：在开始节点设置“自定义参数”-`message_detail(String类型)`，结束节点设置“响应参数”-`response(Object类型，{{LLM.response}})`
+3. `Aliy工作流变量`：在开始节点设置“自定义参数”-`message_detail(String类型)`，结束节点设置“响应参数”-`response(Object类型，{{LLM.response}})`
 ---
 
 
@@ -86,14 +86,6 @@ python main.py
 
 ---
 
-## 结果说明
-- 样本级（sheet1_samples）：包含 `sample_id`、`message_detail`、`ground_truth`、`object`、`content`、`is_match`（1 完全匹配/0 不匹配）。
-- 标签级（sheet2_labels）：包含 `label`、`support`、`predicted`、`tp`、`recall`、`precision`。默认以真实标签全集为基准（仅统计真实出现过的标签）。
-
-示例输出文件：`results/analysis_YYYYMMDD_HHMMSS.xlsx`
-
----
-
 ## 分析结果解读指南
 - 样本级视角：
   - `is_match=1` 表示该样本预测标签集合与真实集合完全一致；`0` 表示不一致（包含漏召或错召）。
@@ -107,5 +99,3 @@ python main.py
 - 综合建议：
   - 优先处理 `support` 高但 `recall` 低的标签（高影响低覆盖）。
   - 对 `precision` 低的标签，排查相似或易混淆标签，优化提示上下文与约束。
-  - 对样本进行分桶（按来源、长度、意图类型等）可更快定位系统性问题。
-  - 在重要标签上观察趋势（多次运行的对比），避免单次波动误判。
